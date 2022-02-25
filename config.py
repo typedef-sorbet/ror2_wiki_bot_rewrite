@@ -6,8 +6,8 @@ def as_dict():
     with open(_CONFIG_PATH, "r") as infile:
         return json.loads(infile.read())
 
-def channel_ids():
-    return as_dict()["channel_ids"]
+def notify_channel():
+    return int(as_dict()["notify_channel"])
 
 def token():
     return as_dict()["client_token"]

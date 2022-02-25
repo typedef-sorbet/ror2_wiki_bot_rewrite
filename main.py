@@ -4,11 +4,25 @@ import urllib
 import requests
 import logging
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from bs4 import BeautifulSoup as Soup
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 bot = commands.Bot(command_prefix="!")
+
+class DateCheckerCog(commands.Cog):
+    def __init__(self):
+        self.checkIsReleaseDay.start()
+
+    @tasks.loop(hours=1.0)
+    async def checkIsReleaseDay(self):
+        # Are we able to ready check?
+        now = datetime.now()
+        # March 1st @ 8am PST
+        if now.month == 3 and now.day == 1 and now.hour == 7:
+            await bot.get_channel(config.notify_channel()).send("RISK OF RAIN 2 DLC IS OUT!!! @everyone")
+        
 
 # Trick the wiki into thinking we're a browser
 headers = {
@@ -236,7 +250,8 @@ async def _get_wiki_page(ctx, *, query):
 @bot.command(name="github")
 async def _git(ctx):
     # TODO
-    await ctx.send("You can find the source code for this bot on [GitHub!](https://github.com/warnespe001/ror2_wiki_bot_rewrite)")
+    await ctx.send("You can find the source code for this bot on GitHub!\nhttps://github.com/warnespe001/ror2_wiki_bot_rewrite")
 
 if __name__ == "__main__":
+    cog = DateCheckerCog()
     bot.run(config.token())
